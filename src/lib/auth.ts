@@ -11,6 +11,9 @@ const SCOPES =
     .replace(/\(.*\)/g, "")
     .trim() || "openid email customer-account-api:full";
 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+
 function base64url(input: ArrayBuffer) {
   const bytes = new Uint8Array(input);
   let str = "";
@@ -32,7 +35,8 @@ export async function generateChallenge(verifier: string) {
 
 export function startLogin() {
   const verifier = generateVerifier();
-  sessionStorage.setItem("pkce_verifier", verifier);
+  // Use localStorage so the new tab (for callback) can access it
+  localStorage.setItem("pkce_verifier", verifier);
   generateChallenge(verifier).then((challenge) => {
     const url = new URL(AUTH_URL);
     url.searchParams.set("response_type", "code");
@@ -41,26 +45,33 @@ export function startLogin() {
     url.searchParams.set("scope", SCOPES);
     url.searchParams.set("code_challenge", challenge);
     url.searchParams.set("code_challenge_method", "S256");
-    window.location.assign(url.toString());
+    // Open in new tab to avoid iframe X-Frame-Options blocking
+    window.open(url.toString(), "_blank");
   });
 }
 
 export async function handleCallback() {
   const params = new URLSearchParams(window.location.search);
   const code = params.get("code");
-  const verifier = sessionStorage.getItem("pkce_verifier") || "";
+  // Read verifier from localStorage (set by startLogin, possibly in another tab)
+  const verifier = localStorage.getItem("pkce_verifier") || "";
   if (!code || !verifier) return false;
 
   try {
-    const res = await fetch("/api/token", {
+    // Use Supabase edge function for token exchange
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/shopify-token-exchange`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+      },
       body: JSON.stringify({
         grant_type: "authorization_code",
         code,
         client_id: CLIENT_ID,
         redirect_uri: REDIRECT_URI,
         code_verifier: verifier,
+        token_url: TOKEN_URL,
       }),
     });
 
@@ -73,11 +84,10 @@ export async function handleCallback() {
     const now = Math.floor(Date.now() / 1000);
     const expiresAt = token.expires_in ? now + token.expires_in : now + 3600;
 
-    // Use access_token and id_token provided by Shopify
     localStorage.setItem("customer_access_token", token.access_token || "");
     localStorage.setItem("customer_id_token", token.id_token || "");
     localStorage.setItem("customer_token_expires", String(expiresAt));
-    sessionStorage.removeItem("pkce_verifier");
+    localStorage.removeItem("pkce_verifier");
     return true;
   } catch (error) {
     console.error("Error during handleCallback:", error);
@@ -100,10 +110,10 @@ export function logout(postLogoutRedirect?: string) {
     const url = new URL(LOGOUT_URL);
     if (idToken) url.searchParams.set("id_token_hint", idToken);
     if (postLogoutRedirect) url.searchParams.set("post_logout_redirect_uri", postLogoutRedirect);
-    window.location.assign(url.toString());
-  } else {
-    if (postLogoutRedirect) window.location.assign(postLogoutRedirect);
+    window.open(url.toString(), "_blank");
   }
+  // Also refresh the current page to update UI
+  window.location.reload();
 }
 
 function parseJwt(token: string) {

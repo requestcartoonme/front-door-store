@@ -200,15 +200,36 @@ const ProductDetail = () => {
               {/* Quantity */}
               <div className="mb-6">
                 <p className="text-sm font-medium text-foreground mb-2">Quantity</p>
-                <div className="flex items-center gap-3">
-                  <Button variant="outline" size="icon" className="rounded-lg" onClick={() => setQuantity(Math.max(1, quantity - 1))}>
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <span className="w-12 text-center font-semibold text-lg">{quantity}</span>
-                  <Button variant="outline" size="icon" className="rounded-lg" onClick={() => setQuantity(quantity + 1)}>
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
+                {(() => {
+                  const maxQty = selectedVariant?.quantityAvailable ?? null;
+                  return (
+                    <>
+                      <div className="flex items-center gap-3">
+                        <Button variant="outline" size="icon" className="rounded-lg" onClick={() => setQuantity(Math.max(1, quantity - 1))}>
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <span className="w-12 text-center font-semibold text-lg">{quantity}</span>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="rounded-lg"
+                          onClick={() => {
+                            if (maxQty !== null && quantity >= maxQty) {
+                              toast.error(`Only ${maxQty} available in stock`);
+                            } else {
+                              setQuantity(quantity + 1);
+                            }
+                          }}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      {maxQty !== null && maxQty <= 5 && maxQty > 0 && (
+                        <p className="text-xs text-amber-600 mt-1">Only {maxQty} left in stock</p>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
 
               {/* Add to Cart */}

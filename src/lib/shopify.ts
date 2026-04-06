@@ -15,6 +15,7 @@ export interface ShopifyProduct {
     handle: string;
     productType: string;
     tags: string[];
+    createdAt?: string;
     priceRange: {
       minVariantPrice: { amount: string; currencyCode: string };
     };
@@ -32,6 +33,7 @@ export interface ShopifyProduct {
           price: { amount: string; currencyCode: string };
           compareAtPrice?: { amount: string; currencyCode: string } | null;
           availableForSale: boolean;
+          quantityAvailable?: number | null;
           selectedOptions: Array<{ name: string; value: string }>;
           image?: { url: string; altText: string | null } | null;
         };
@@ -69,40 +71,46 @@ export async function storefrontApiRequest(query: string, variables: Record<stri
   return data;
 }
 
+const PRODUCT_FIELDS = `
+  id
+  title
+  description
+  handle
+  productType
+  tags
+  createdAt
+  priceRange {
+    minVariantPrice { amount currencyCode }
+  }
+  compareAtPriceRange {
+    minVariantPrice { amount currencyCode }
+  }
+  images(first: 10) {
+    edges { node { url altText } }
+  }
+  variants(first: 20) {
+    edges {
+      node {
+        id
+        title
+        price { amount currencyCode }
+        compareAtPrice { amount currencyCode }
+        availableForSale
+        quantityAvailable
+        selectedOptions { name value }
+        image { url altText }
+      }
+    }
+  }
+  options { name values }
+`;
+
 const PRODUCTS_QUERY = `
-  query GetProducts($first: Int!, $query: String) {
-    products(first: $first, query: $query) {
+  query GetProducts($first: Int!, $query: String, $sortKey: ProductSortKeys, $reverse: Boolean) {
+    products(first: $first, query: $query, sortKey: $sortKey, reverse: $reverse) {
       edges {
         node {
-          id
-          title
-          description
-          handle
-          productType
-          tags
-          priceRange {
-            minVariantPrice { amount currencyCode }
-          }
-          compareAtPriceRange {
-            minVariantPrice { amount currencyCode }
-          }
-          images(first: 10) {
-            edges { node { url altText } }
-          }
-          variants(first: 20) {
-            edges {
-              node {
-                id
-                title
-                price { amount currencyCode }
-                compareAtPrice { amount currencyCode }
-                availableForSale
-                selectedOptions { name value }
-                image { url altText }
-              }
-            }
-          }
-          options { name values }
+          ${PRODUCT_FIELDS}
         }
       }
     }
@@ -112,41 +120,18 @@ const PRODUCTS_QUERY = `
 const PRODUCT_BY_HANDLE_QUERY = `
   query GetProductByHandle($handle: String!) {
     product(handle: $handle) {
-      id
-      title
-      description
-      handle
-      productType
-      tags
-      priceRange {
-        minVariantPrice { amount currencyCode }
-      }
-      compareAtPriceRange {
-        minVariantPrice { amount currencyCode }
-      }
-      images(first: 10) {
-        edges { node { url altText } }
-      }
-      variants(first: 20) {
-        edges {
-          node {
-            id
-            title
-            price { amount currencyCode }
-            compareAtPrice { amount currencyCode }
-            availableForSale
-            selectedOptions { name value }
-            image { url altText }
-          }
-        }
-      }
-      options { name values }
+      ${PRODUCT_FIELDS}
     }
   }
 `;
 
-export async function fetchProducts(first = 50, query?: string): Promise<ShopifyProduct[]> {
-  const data = await storefrontApiRequest(PRODUCTS_QUERY, { first, query: query || null });
+export async function fetchProducts(first = 50, query?: string, sortKey?: string, reverse?: boolean): Promise<ShopifyProduct[]> {
+  const data = await storefrontApiRequest(PRODUCTS_QUERY, {
+    first,
+    query: query || null,
+    sortKey: sortKey || null,
+    reverse: reverse ?? null,
+  });
   return data?.data?.products?.edges || [];
 }
 

@@ -5,14 +5,15 @@ import { CategoriesSection } from '@/components/CategoriesSection';
 import { ProductRow } from '@/components/ProductRow';
 import { PromoBanner } from '@/components/PromoBanner';
 import { FeaturesMarquee } from '@/components/FeaturesMarquee';
-import { useProducts } from '@/hooks/useProducts';
+import { useBestSellers, useNewArrivals } from '@/hooks/useProducts';
 import { Loader2 } from 'lucide-react';
 
 const Index = () => {
-  const { data: products, isLoading } = useProducts();
+  const { data: bestSellers, isLoading: loadingBest } = useBestSellers(10);
+  const { data: newArrivals, isLoading: loadingNew } = useNewArrivals(10);
 
-  const bestSellers = products?.slice(0, 10) || [];
-  const newArrivals = products?.slice(0, 10) || [];
+  const isLoading = loadingBest && loadingNew;
+  const hasProducts = (bestSellers && bestSellers.length > 0) || (newArrivals && newArrivals.length > 0);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -26,11 +27,15 @@ const Index = () => {
           <div className="flex justify-center py-20">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
-        ) : products && products.length > 0 ? (
+        ) : hasProducts ? (
           <>
-            <ProductRow title="Best Sellers" products={bestSellers} viewMoreLink="/products" />
+            {bestSellers && bestSellers.length > 0 && (
+              <ProductRow title="Best Sellers" products={bestSellers} viewMoreLink="/products" />
+            )}
             <PromoBanner />
-            <ProductRow title="New Arrivals" products={newArrivals} viewMoreLink="/products" />
+            {newArrivals && newArrivals.length > 0 && (
+              <ProductRow title="New Arrivals" products={newArrivals} viewMoreLink="/products" />
+            )}
           </>
         ) : (
           <section className="py-20 text-center">

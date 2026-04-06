@@ -1,7 +1,7 @@
-const CLIENT_ID = (import.meta.env.VITE_CUSTOMER_AUTH_CLIENT_ID as string) || "";
-const AUTH_URL = ((import.meta.env.VITE_CUSTOMER_AUTH_AUTH_URL as string) || "").replace(/[`'"]/g, "");
-const TOKEN_URL = ((import.meta.env.VITE_CUSTOMER_AUTH_TOKEN_URL as string) || "").replace(/[`'"]/g, "");
-const LOGOUT_URL = ((import.meta.env.VITE_CUSTOMER_AUTH_LOGOUT_URL as string) || "").replace(/[`'"]/g, "");
+const CLIENT_ID = (import.meta.env.VITE_CUSTOMER_AUTH_CLIENT_ID as string) || "e0c6b837-1dcd-4b73-936f-03900d47f548";
+const AUTH_URL = ((import.meta.env.VITE_CUSTOMER_AUTH_AUTH_URL as string) || "https://shopify.com/authentication/75294244911/oauth/authorize").replace(/[`'"]/g, "");
+const TOKEN_URL = ((import.meta.env.VITE_CUSTOMER_AUTH_TOKEN_URL as string) || "https://shopify.com/authentication/75294244911/oauth/token").replace(/[`'"]/g, "");
+const LOGOUT_URL = ((import.meta.env.VITE_CUSTOMER_AUTH_LOGOUT_URL as string) || "https://shopify.com/authentication/75294244911/logout").replace(/[`'"]/g, "");
 const REDIRECT_URI =
   ((import.meta.env.VITE_CUSTOMER_AUTH_REDIRECT_URI as string) ||
     `${typeof window !== "undefined" ? window.location.origin : "http://localhost:8080"}/auth/callback`).replace(/[`'"]/g, "");

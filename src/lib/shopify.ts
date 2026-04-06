@@ -1,11 +1,11 @@
 import { toast } from "sonner";
 
 const SHOPIFY_API_VERSION = import.meta.env.VITE_SHOPIFY_API_VERSION || '2025-07';
-const SHOPIFY_STORE_PERMANENT_DOMAIN = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN || '';
+const SHOPIFY_STORE_PERMANENT_DOMAIN = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN || 'anurpan-logo-lelo.myshopify.com';
 const SHOPIFY_STOREFRONT_URL =
   import.meta.env.VITE_SHOPIFY_STOREFRONT_URL ||
   (SHOPIFY_STORE_PERMANENT_DOMAIN ? `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json` : '');
-const SHOPIFY_STOREFRONT_TOKEN = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN || '';
+const SHOPIFY_STOREFRONT_TOKEN = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN || 'c852cd4fd1c61ebcfb71680b205a410a';
 
 export interface ShopifyProduct {
   node: {

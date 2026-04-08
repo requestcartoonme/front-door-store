@@ -26,67 +26,70 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border">
       {/* Top bar */}
-      <div className="bg-primary text-primary-foreground text-center py-1.5 text-xs font-body tracking-wide">
+      <div className="bg-primary text-primary-foreground text-center py-1.5 text-[10px] sm:text-xs font-body tracking-wide">
         Free Shipping on Orders Above ₹999 | 7 Days Easy Returns
       </div>
 
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 lg:h-20">
-          {/* Mobile menu */}
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-80 overflow-y-auto">
-              <SheetTitle className="font-display text-xl text-primary">Anurpan</SheetTitle>
-              <nav className="mt-6 space-y-4">
-                {isAuthenticated() ? (
-                  <>
-                    <Link to="/account" className="flex items-center gap-2 py-2 text-sm font-medium text-primary">
+        <div className="flex items-center justify-between h-14 lg:h-20">
+          {/* Mobile: just logo centered. Desktop: logo left */}
+          {/* Mobile hamburger — hidden, moved to bottom nav */}
+          <div className="hidden md:block lg:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-80 overflow-y-auto">
+                <SheetTitle className="font-display text-xl text-primary">Anurpan</SheetTitle>
+                <nav className="mt-6 space-y-4">
+                  {isAuthenticated() ? (
+                    <>
+                      <Link to="/account" className="flex items-center gap-2 py-2 text-sm font-medium text-primary">
+                        <User className="h-5 w-5" />
+                        {(getIdTokenClaims()?.["name"] as string) || (getIdTokenClaims()?.["email"] as string) || "Account"}
+                      </Link>
+                      <button onClick={() => logout("/")} className="flex items-center gap-2 py-2 text-sm font-medium text-primary w-full">
+                        <LogOut className="h-5 w-5" />
+                        Sign out
+                      </button>
+                    </>
+                  ) : (
+                    <Link to="/login" className="flex items-center gap-2 py-2 text-sm font-medium text-primary">
                       <User className="h-5 w-5" />
-                      {(getIdTokenClaims()?.["name"] as string) || (getIdTokenClaims()?.["email"] as string) || "Account"}
+                      Sign in / Sign up
                     </Link>
-                    <button onClick={() => logout("/")} className="flex items-center gap-2 py-2 text-sm font-medium text-primary w-full">
-                      <LogOut className="h-5 w-5" />
-                      Sign out
-                    </button>
-                  </>
-                ) : (
-                  <Link to="/login" className="flex items-center gap-2 py-2 text-sm font-medium text-primary">
-                    <User className="h-5 w-5" />
-                    Sign in / Sign up
-                  </Link>
-                )}
-                {(Object.keys(CATEGORIES) as MainCategory[]).map((cat) => (
-                  <div key={cat}>
-                    <p className="font-display font-semibold text-primary mb-2">{cat}</p>
+                  )}
+                  {(Object.keys(CATEGORIES) as MainCategory[]).map((cat) => (
+                    <div key={cat}>
+                      <p className="font-display font-semibold text-primary mb-2">{cat}</p>
+                      <div className="pl-4 space-y-1">
+                        {CATEGORIES[cat].map((sub) => (
+                          <Link key={sub} to={`/products?category=${encodeURIComponent(cat)}&sub=${encodeURIComponent(sub)}`} className="block py-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                            {sub}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  <div>
+                    <p className="font-display font-semibold text-primary mb-2">Collections</p>
                     <div className="pl-4 space-y-1">
-                      {CATEGORIES[cat].map((sub) => (
-                        <Link key={sub} to={`/products?category=${encodeURIComponent(cat)}&sub=${encodeURIComponent(sub)}`} className="block py-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                          {sub}
+                      {COLLECTIONS.map((col) => (
+                        <Link key={col} to={`/products?collection=${encodeURIComponent(col)}`} className="block py-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                          {col}
                         </Link>
                       ))}
                     </div>
                   </div>
-                ))}
-                <div>
-                  <p className="font-display font-semibold text-primary mb-2">Collections</p>
-                  <div className="pl-4 space-y-1">
-                    {COLLECTIONS.map((col) => (
-                      <Link key={col} to={`/products?collection=${encodeURIComponent(col)}`} className="block py-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                        {col}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </nav>
-            </SheetContent>
-          </Sheet>
+                </nav>
+              </SheetContent>
+            </Sheet>
+          </div>
 
-          {/* Logo */}
-          <Link to="/" className="inline-flex items-center">
+          {/* Logo — centered on mobile */}
+          <Link to="/" className="inline-flex items-center md:mr-auto">
             <img src="/logo.svg" alt="Anurpan" className="h-8 lg:h-10 w-auto" />
           </Link>
 
@@ -135,8 +138,8 @@ export function Navbar() {
             </div>
           </nav>
 
-          {/* Right side */}
-          <div className="flex items-center gap-2">
+          {/* Right side — hidden on small mobile (moved to bottom nav), visible md+ */}
+          <div className="hidden md:flex items-center gap-2">
             {searchOpen ? (
               <form onSubmit={handleSearch} className="flex items-center gap-2">
                 <Input

@@ -23,27 +23,27 @@ export function ProductRow({ title, products, viewMoreLink }: ProductRowProps) {
   if (products.length === 0) return null;
 
   return (
-    <section className="py-10 lg:py-16">
+    <section className="py-8 sm:py-10 lg:py-16">
       <div className="container mx-auto px-4">
-        <div className="flex items-end justify-between mb-6 lg:mb-8">
-          <h2 className="font-display text-2xl lg:text-3xl font-bold text-foreground">{title}</h2>
+        <div className="flex items-end justify-between mb-4 sm:mb-6 lg:mb-8">
+          <h2 className="font-display text-xl sm:text-2xl lg:text-3xl font-bold text-foreground">{title}</h2>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" className="rounded-full h-9 w-9 hidden md:flex" onClick={() => scroll('left')}>
+            <Button variant="outline" size="icon" className="rounded-full h-8 w-8 sm:h-9 sm:w-9 hidden md:flex" onClick={() => scroll('left')}>
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="icon" className="rounded-full h-9 w-9 hidden md:flex" onClick={() => scroll('right')}>
+            <Button variant="outline" size="icon" className="rounded-full h-8 w-8 sm:h-9 sm:w-9 hidden md:flex" onClick={() => scroll('right')}>
               <ChevronRight className="h-4 w-4" />
             </Button>
             {viewMoreLink && (
               <Link to={viewMoreLink}>
-                <Button variant="link" className="text-primary font-medium">View More →</Button>
+                <Button variant="link" className="text-primary font-medium text-sm sm:text-base p-0 h-auto">View More →</Button>
               </Link>
             )}
           </div>
         </div>
-        <div ref={scrollRef} className="flex gap-4 lg:gap-6 overflow-x-auto scrollbar-hide pb-4 snap-x snap-mandatory">
+        <div ref={scrollRef} className="flex gap-3 sm:gap-4 lg:gap-6 overflow-x-auto scrollbar-hide pb-4 snap-x snap-mandatory">
           {products.map((product) => (
-            <div key={product.node.id} className="flex-shrink-0 w-[200px] lg:w-[260px] snap-start">
+            <div key={product.node.id} className="flex-shrink-0 w-[160px] sm:w-[200px] lg:w-[240px] snap-start">
               <ProductCard product={product} />
             </div>
           ))}

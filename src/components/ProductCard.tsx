@@ -39,7 +39,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link to={`/product/${node.handle}`} className="group block">
-      <div className="relative rounded-xl overflow-hidden bg-muted aspect-square">
+      <div className="relative rounded-lg sm:rounded-xl overflow-hidden bg-muted aspect-square">
         {image ? (
           <img
             src={image.url}
@@ -48,30 +48,31 @@ export function ProductCard({ product }: ProductCardProps) {
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-muted-foreground">No image</div>
+          <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">No image</div>
         )}
         {hasDiscount && (
-          <span className="absolute top-3 left-3 bg-secondary text-secondary-foreground text-xs font-semibold px-2 py-1 rounded-full">
+          <span className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-secondary text-secondary-foreground text-[10px] sm:text-xs font-semibold px-2 py-0.5 sm:py-1 rounded-full">
             -{discountPercent}%
           </span>
         )}
-        <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        {/* Always visible on mobile, hover on desktop */}
+        <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300">
           <Button
             size="icon"
-            className="rounded-full bg-primary hover:bg-primary/90 shadow-lg h-10 w-10"
+            className="rounded-full bg-primary hover:bg-primary/90 shadow-lg h-8 w-8 sm:h-10 sm:w-10"
             onClick={handleAddToCart}
             disabled={isLoading || !variant?.availableForSale}
           >
-            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShoppingCart className="h-4 w-4" />}
+            {isLoading ? <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 animate-spin" /> : <ShoppingCart className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
           </Button>
         </div>
       </div>
-      <div className="mt-3 px-1">
-        <h3 className="text-sm font-medium text-foreground truncate">{node.title}</h3>
-        <div className="flex items-center gap-2 mt-1">
-          <span className="font-semibold text-foreground">₹{price.toFixed(0)}</span>
+      <div className="mt-2 sm:mt-3 px-0.5">
+        <h3 className="text-xs sm:text-sm font-medium text-foreground line-clamp-2 leading-tight">{node.title}</h3>
+        <div className="flex items-center gap-1.5 sm:gap-2 mt-1">
+          <span className="font-semibold text-sm sm:text-base text-foreground">₹{price.toFixed(0)}</span>
           {hasDiscount && (
-            <span className="text-sm text-muted-foreground line-through">₹{compareAt.toFixed(0)}</span>
+            <span className="text-xs sm:text-sm text-muted-foreground line-through">₹{compareAt.toFixed(0)}</span>
           )}
         </div>
       </div>

@@ -22,8 +22,8 @@ const SLIDES: Slide[] = [
     ctaText: 'Shop Silver 925',
     ctaLink: '/products?category=Silver+925',
     bgGradient: 'from-primary/70 to-maroon-light/60',
-    imageUrl: '/black-vixen-necklace-wearing-model-dine-in-hero-banner-image-desktop 2.jpg',
-    imageUrlDesktop: '/black-vixen-necklace-wearing-model-dine-in-hero-banner-image-desktop 2.jpg',
+    imageUrl: '/black-vixen-necklace-wearing-model-dine-in-hero-banner-image-desktop%202.jpg',
+    imageUrlDesktop: '/black-vixen-necklace-wearing-model-dine-in-hero-banner-image-desktop%202.jpg',
     imageUrlMobile: '/black-vixen-necklace-wearing-model-dine-in-hero-banner-image-mobile_3.jpg',
   },
   {
@@ -57,7 +57,7 @@ export function HeroCarousel() {
 
   return (
     <section className="relative overflow-hidden">
-      <div className="relative h-[450px] sm:h-[550px] lg:h-[750px]">
+      <div className="relative h-[55vh] sm:h-[550px] lg:h-[750px]">
         {SLIDES.map((slide, i) => (
           <div
             key={slide.id}
@@ -82,10 +82,10 @@ export function HeroCarousel() {
                 <div className="relative z-10 flex items-center h-full">
                   <div className="container mx-auto px-4">
                     <div className="max-w-xl">
-                      <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-primary-foreground mb-4 leading-tight">
+                      <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-bold text-primary-foreground mb-3 sm:mb-4 leading-tight">
                         {slide.title}
                       </h1>
-                      <p className="text-lg sm:text-xl text-primary-foreground/90 mb-8 font-body leading-relaxed">
+                      <p className="text-base sm:text-xl text-primary-foreground/90 mb-6 sm:mb-8 font-body leading-relaxed">
                         {slide.subtitle}
                       </p>
                       <a href={slide.ctaLink}>
@@ -103,15 +103,15 @@ export function HeroCarousel() {
       </div>
 
       {/* Controls */}
-      <Button variant="ghost" size="icon" className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-background/30 hover:bg-background/50 text-primary-foreground h-10 w-10" onClick={prev}>
+      <Button variant="ghost" size="icon" className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-background/30 hover:bg-background/50 text-primary-foreground h-9 w-9 sm:h-10 sm:w-10" onClick={prev}>
         <ChevronLeft className="h-5 w-5" />
       </Button>
-      <Button variant="ghost" size="icon" className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-background/30 hover:bg-background/50 text-primary-foreground h-10 w-10" onClick={next}>
+      <Button variant="ghost" size="icon" className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-background/30 hover:bg-background/50 text-primary-foreground h-9 w-9 sm:h-10 sm:w-10" onClick={next}>
         <ChevronRight className="h-5 w-5" />
       </Button>
 
       {/* Dots */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+      <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
         {SLIDES.map((_, i) => (
           <button
             key={i}

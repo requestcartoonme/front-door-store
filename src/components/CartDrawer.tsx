@@ -1,11 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 
-export function CartDrawer() {
+interface CartDrawerProps {
+  trigger?: ReactNode;
+}
+
+export function CartDrawer({ trigger }: CartDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -21,17 +25,21 @@ export function CartDrawer() {
     }
   };
 
+  const defaultTrigger = (
+    <Button variant="ghost" size="icon" className="relative">
+      <ShoppingCart className="h-5 w-5" />
+      {totalItems > 0 && (
+        <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-secondary text-secondary-foreground">
+          {totalItems}
+        </Badge>
+      )}
+    </Button>
+  );
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
-          <ShoppingCart className="h-5 w-5" />
-          {totalItems > 0 && (
-            <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-secondary text-secondary-foreground">
-              {totalItems}
-            </Badge>
-          )}
-        </Button>
+        {trigger || defaultTrigger}
       </SheetTrigger>
       <SheetContent className="w-full sm:max-w-lg flex flex-col h-full">
         <SheetHeader className="flex-shrink-0">
@@ -40,7 +48,7 @@ export function CartDrawer() {
             {totalItems === 0 ? "Your cart is empty" : `${totalItems} item${totalItems !== 1 ? 's' : ''} in your cart`}
           </SheetDescription>
         </SheetHeader>
-        <div className="flex flex-col flex-1 pt-6 min-h-0">
+        <div className="flex flex-col flex-1 pt-4 sm:pt-6 min-h-0">
           {items.length === 0 ? (
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
@@ -51,18 +59,18 @@ export function CartDrawer() {
           ) : (
             <>
               <div className="flex-1 overflow-y-auto pr-2 min-h-0">
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {items.map((item) => (
-                    <div key={item.variantId} className="flex gap-4 p-3 rounded-lg bg-muted/50">
-                      <div className="w-16 h-16 bg-muted rounded-lg overflow-hidden flex-shrink-0">
+                    <div key={item.variantId} className="flex gap-3 p-3 rounded-xl bg-muted/50">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-muted rounded-lg overflow-hidden flex-shrink-0">
                         {item.product.node.images?.edges?.[0]?.node && (
                           <img src={item.product.node.images.edges[0].node.url} alt={item.product.node.title} className="w-full h-full object-cover" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-sm truncate">{item.product.node.title}</h4>
+                        <h4 className="font-medium text-sm line-clamp-2">{item.product.node.title}</h4>
                         {item.selectedOptions.length > 0 && (
-                          <p className="text-xs text-muted-foreground">{item.selectedOptions.map(o => o.value).join(' • ')}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">{item.selectedOptions.map(o => o.value).join(' • ')}</p>
                         )}
                         <p className="font-semibold text-sm mt-1">₹{parseFloat(item.price.amount).toFixed(0)}</p>
                       </div>
@@ -71,11 +79,11 @@ export function CartDrawer() {
                           <Trash2 className="h-3 w-3" />
                         </Button>
                         <div className="flex items-center gap-1">
-                          <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => updateQuantity(item.variantId, item.quantity - 1)}>
+                          <Button variant="outline" size="icon" className="h-7 w-7 rounded-lg" onClick={() => updateQuantity(item.variantId, item.quantity - 1)}>
                             <Minus className="h-3 w-3" />
                           </Button>
-                          <span className="w-8 text-center text-sm">{item.quantity}</span>
-                          <Button variant="outline" size="icon" className="h-6 w-6" onClick={() => updateQuantity(item.variantId, item.quantity + 1)}>
+                          <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
+                          <Button variant="outline" size="icon" className="h-7 w-7 rounded-lg" onClick={() => updateQuantity(item.variantId, item.quantity + 1)}>
                             <Plus className="h-3 w-3" />
                           </Button>
                         </div>
@@ -89,7 +97,7 @@ export function CartDrawer() {
                   <span className="font-display text-lg">Total</span>
                   <span className="text-xl font-bold">₹{totalPrice.toFixed(0)}</span>
                 </div>
-                <Button onClick={handleCheckout} className="w-full bg-primary hover:bg-primary/90" size="lg" disabled={items.length === 0 || isLoading || isSyncing}>
+                <Button onClick={handleCheckout} className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold" size="lg" disabled={items.length === 0 || isLoading || isSyncing}>
                   {isLoading || isSyncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <><ExternalLink className="w-4 h-4 mr-2" />Checkout</>}
                 </Button>
               </div>

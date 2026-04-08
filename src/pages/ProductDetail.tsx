@@ -94,10 +94,10 @@ const ProductDetail = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1">
-        <div className="container mx-auto px-4 py-8 lg:py-12">
-          {/* Breadcrumb */}
-          <nav className="text-sm text-muted-foreground mb-6">
+      <main className="flex-1 pb-20 sm:pb-0">
+        <div className="container mx-auto px-0 sm:px-4 py-0 sm:py-8 lg:py-12">
+          {/* Breadcrumb — hidden on mobile for cleaner look */}
+          <nav className="hidden sm:block text-sm text-muted-foreground mb-6 px-4 sm:px-0">
             <Link to="/" className="hover:text-primary">Home</Link>
             <span className="mx-2">/</span>
             <Link to="/products" className="hover:text-primary">Products</Link>
@@ -105,10 +105,10 @@ const ProductDetail = () => {
             <span className="text-foreground">{product.title}</span>
           </nav>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* Images */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 sm:gap-8 lg:gap-12">
+            {/* Images — full width on mobile */}
             <div>
-              <div className="aspect-square rounded-2xl overflow-hidden bg-muted mb-4">
+              <div className="aspect-square sm:rounded-2xl overflow-hidden bg-muted sm:mb-4">
                 {images[selectedImageIndex]?.node ? (
                   <img
                     src={images[selectedImageIndex].node.url}
@@ -120,12 +120,12 @@ const ProductDetail = () => {
                 )}
               </div>
               {images.length > 1 && (
-                <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+                <div className="flex gap-2 overflow-x-auto scrollbar-hide px-4 sm:px-0 py-3 sm:py-0">
                   {images.map((img, i) => (
                     <button
                       key={i}
                       onClick={() => setSelectedImageIndex(i)}
-                      className={`flex-shrink-0 w-16 h-16 lg:w-20 lg:h-20 rounded-lg overflow-hidden border-2 transition-all ${i === selectedImageIndex ? 'border-primary' : 'border-border hover:border-primary/50'}`}
+                      className={`flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-lg overflow-hidden border-2 transition-all ${i === selectedImageIndex ? 'border-primary' : 'border-border hover:border-primary/50'}`}
                     >
                       <img src={img.node.url} alt="" className="w-full h-full object-cover" />
                     </button>
@@ -135,27 +135,27 @@ const ProductDetail = () => {
             </div>
 
             {/* Info */}
-            <div>
+            <div className="px-4 sm:px-0 pt-4 sm:pt-0">
               {product.productType && (
-                <span className="inline-block px-3 py-1 text-xs rounded-full bg-secondary/15 text-secondary font-medium mb-3">
+                <span className="inline-block px-3 py-1 text-xs rounded-full bg-secondary/15 text-secondary font-medium mb-2 sm:mb-3">
                   {product.productType}
                 </span>
               )}
-              <h1 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4">{product.title}</h1>
+              <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-3 sm:mb-4">{product.title}</h1>
 
               {/* Price */}
-              <div className="flex items-baseline gap-3 mb-6">
-                <span className="text-3xl font-bold text-foreground">₹{price.toFixed(0)}</span>
+              <div className="flex items-baseline gap-2 sm:gap-3 mb-4 sm:mb-6">
+                <span className="text-2xl sm:text-3xl font-bold text-foreground">₹{price.toFixed(0)}</span>
                 {hasDiscount && (
                   <>
-                    <span className="text-xl text-muted-foreground line-through">₹{compareAt.toFixed(0)}</span>
-                    <span className="text-sm font-semibold text-secondary">-{Math.round((1 - price / compareAt) * 100)}% OFF</span>
+                    <span className="text-lg sm:text-xl text-muted-foreground line-through">₹{compareAt.toFixed(0)}</span>
+                    <span className="text-xs sm:text-sm font-semibold text-secondary">-{Math.round((1 - price / compareAt) * 100)}% OFF</span>
                   </>
                 )}
               </div>
 
               {/* Availability */}
-              <div className="flex items-center gap-2 mb-6">
+              <div className="flex items-center gap-2 mb-4 sm:mb-6">
                 {selectedVariant?.availableForSale ? (
                   <><Check className="h-4 w-4 text-green-600" /><span className="text-sm text-green-600 font-medium">In Stock</span></>
                 ) : (
@@ -165,29 +165,20 @@ const ProductDetail = () => {
 
               {/* Variants */}
               {product.options.filter(o => o.name !== 'Title' || o.values[0] !== 'Default Title').map((option) => (
-                <div key={option.name} className="mb-6">
+                <div key={option.name} className="mb-4 sm:mb-6">
                   <p className="text-sm font-medium text-foreground mb-2">{option.name}</p>
                   <div className="flex flex-wrap gap-2">
                     {option.values.map((value) => {
                       const isSelected = selectedOptions[option.name] === value;
-                      
-                      // Check if this combination is available
-                      const potentialOptions = { ...selectedOptions, [option.name]: value };
-                      const isAvailable = variants.some(v => 
-                        v.node.selectedOptions.every(opt => potentialOptions[opt.name] === opt.value)
-                      );
-
                       return (
                         <button
                           key={value}
-                          onClick={() => {
-                            setSelectedOptions(prev => ({ ...prev, [option.name]: value }));
-                          }}
-                          className={`px-4 py-2 rounded-lg text-sm border-2 transition-all ${
+                          onClick={() => setSelectedOptions(prev => ({ ...prev, [option.name]: value }))}
+                          className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm border-2 transition-all ${
                             isSelected 
                               ? 'border-primary bg-primary text-primary-foreground' 
                               : 'border-border hover:border-primary'
-                          } ${!isAvailable && !isSelected ? '' : ''}`}
+                          }`}
                         >
                           {value}
                         </button>
@@ -198,21 +189,21 @@ const ProductDetail = () => {
               ))}
 
               {/* Quantity */}
-              <div className="mb-6">
+              <div className="mb-4 sm:mb-6">
                 <p className="text-sm font-medium text-foreground mb-2">Quantity</p>
                 {(() => {
                   const maxQty = selectedVariant?.quantityAvailable ?? null;
                   return (
                     <>
                       <div className="flex items-center gap-3">
-                        <Button variant="outline" size="icon" className="rounded-lg" onClick={() => setQuantity(Math.max(1, quantity - 1))}>
+                        <Button variant="outline" size="icon" className="rounded-lg h-9 w-9" onClick={() => setQuantity(Math.max(1, quantity - 1))}>
                           <Minus className="h-4 w-4" />
                         </Button>
-                        <span className="w-12 text-center font-semibold text-lg">{quantity}</span>
+                        <span className="w-10 text-center font-semibold text-lg">{quantity}</span>
                         <Button
                           variant="outline"
                           size="icon"
-                          className="rounded-lg"
+                          className="rounded-lg h-9 w-9"
                           onClick={() => {
                             if (maxQty !== null && quantity >= maxQty) {
                               toast.error(`Only ${maxQty} available in stock`);
@@ -232,35 +223,37 @@ const ProductDetail = () => {
                 })()}
               </div>
 
-              {/* Add to Cart */}
-              <Button
-                onClick={handleAddToCart}
-                disabled={cartLoading || !selectedVariant?.availableForSale}
-                size="lg"
-                className="w-full rounded-xl bg-primary hover:bg-primary/90 text-lg font-semibold py-6"
-              >
-                {cartLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <><ShoppingCart className="h-5 w-5 mr-2" />Add to Cart — ₹{(price * quantity).toFixed(0)}</>}
-              </Button>
+              {/* Add to Cart — hidden on mobile, shown via sticky bar */}
+              <div className="hidden sm:block">
+                <Button
+                  onClick={handleAddToCart}
+                  disabled={cartLoading || !selectedVariant?.availableForSale}
+                  size="lg"
+                  className="w-full rounded-xl bg-primary hover:bg-primary/90 text-lg font-semibold py-6"
+                >
+                  {cartLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <><ShoppingCart className="h-5 w-5 mr-2" />Add to Cart — ₹{(price * quantity).toFixed(0)}</>}
+                </Button>
+              </div>
 
               {/* Tabs */}
-              <Tabs defaultValue="details" className="mt-8">
-                <TabsList className="w-full">
-                  <TabsTrigger value="details" className="flex-1">Product Details</TabsTrigger>
-                  <TabsTrigger value="refund" className="flex-1">Refund Policy</TabsTrigger>
-                  <TabsTrigger value="delivery" className="flex-1">Delivery Info</TabsTrigger>
+              <Tabs defaultValue="details" className="mt-6 sm:mt-8">
+                <TabsList className="w-full h-auto flex">
+                  <TabsTrigger value="details" className="flex-1 text-xs sm:text-sm py-2">Details</TabsTrigger>
+                  <TabsTrigger value="refund" className="flex-1 text-xs sm:text-sm py-2">Refund</TabsTrigger>
+                  <TabsTrigger value="delivery" className="flex-1 text-xs sm:text-sm py-2">Delivery</TabsTrigger>
                 </TabsList>
                 <TabsContent value="details" className="mt-4">
-                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-sm">
                     {product.description || 'No description available.'}
                   </p>
                 </TabsContent>
                 <TabsContent value="refund" className="mt-4">
-                  <p className="text-muted-foreground leading-relaxed">
+                  <p className="text-muted-foreground leading-relaxed text-sm">
                     We offer a 7-day return policy on all products. Items must be returned in their original condition with tags attached. Refunds are processed within 5-7 business days.
                   </p>
                 </TabsContent>
                 <TabsContent value="delivery" className="mt-4">
-                  <p className="text-muted-foreground leading-relaxed">
+                  <p className="text-muted-foreground leading-relaxed text-sm">
                     Free shipping on orders above ₹999. Standard delivery takes 5-7 business days. Express delivery available at checkout for select locations.
                   </p>
                 </TabsContent>
@@ -271,9 +264,24 @@ const ProductDetail = () => {
 
         {/* Similar Products */}
         {similarProducts.length > 0 && (
-          <ProductRow title="Similar Products" products={similarProducts} viewMoreLink="/products" />
+          <div className="px-0">
+            <ProductRow title="Similar Products" products={similarProducts} viewMoreLink="/products" />
+          </div>
         )}
       </main>
+
+      {/* Sticky Add to Cart bar — mobile only */}
+      <div className="fixed bottom-16 left-0 right-0 z-40 sm:hidden bg-background border-t border-border px-4 py-3" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0)' }}>
+        <Button
+          onClick={handleAddToCart}
+          disabled={cartLoading || !selectedVariant?.availableForSale}
+          size="lg"
+          className="w-full rounded-xl bg-primary hover:bg-primary/90 font-semibold"
+        >
+          {cartLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <><ShoppingCart className="h-4 w-4 mr-2" />Add to Cart — ₹{(price * quantity).toFixed(0)}</>}
+        </Button>
+      </div>
+
       <Footer />
     </div>
   );

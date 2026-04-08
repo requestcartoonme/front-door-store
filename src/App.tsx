@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useCartSync } from "@/hooks/useCartSync";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -33,6 +34,7 @@ function AppContent() {
         <Route path="/account" element={<Account />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <MobileBottomNav />
     </BrowserRouter>
   );
 }

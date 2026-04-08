@@ -24,7 +24,7 @@ const Index = () => {
         <CategoriesSection />
 
         {isLoading ? (
-          <div className="flex justify-center py-20">
+          <div className="flex justify-center py-12 sm:py-20">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : hasProducts ? (
@@ -38,11 +38,11 @@ const Index = () => {
             )}
           </>
         ) : (
-          <section className="py-20 text-center">
+          <section className="py-12 sm:py-20 text-center">
             <div className="container mx-auto px-4">
-              <h2 className="font-display text-2xl font-bold text-foreground mb-4">No Products Yet</h2>
-              <p className="text-muted-foreground max-w-md mx-auto">
-                Products will appear here once they're added to the store. Tell us what products you'd like to sell!
+              <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-4">No Products Yet</h2>
+              <p className="text-muted-foreground max-w-md mx-auto text-sm sm:text-base">
+                Products will appear here once they're added to the store.
               </p>
             </div>
           </section>
